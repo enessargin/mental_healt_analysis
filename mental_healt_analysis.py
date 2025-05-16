@@ -22,14 +22,12 @@ LEAKAGE_COLS = ["depression_score", "anxiety_score"]
 
 
 def load_data(path: Path = DATA_PATH) -> pd.DataFrame:
-    """Read the CSV and return a DataFrame."""
     if not path.exists():
         raise FileNotFoundError(f"{path} not found – check the path or filename.")
     return pd.read_csv(path)
 
 
 def remove_leakage(df: pd.DataFrame, leakage_cols=LEAKAGE_COLS) -> pd.DataFrame:
-    """Drop columns that were used to compute / are perfectly correlated with the label."""
     present = [c for c in leakage_cols if c in df.columns]
     if present:
         print(f"Dropping leakage columns: {present}")
@@ -37,7 +35,6 @@ def remove_leakage(df: pd.DataFrame, leakage_cols=LEAKAGE_COLS) -> pd.DataFrame:
 
 
 def split_data(df: pd.DataFrame, test_size=0.2, val_size=0.1):
-    """Stratified train/val/test split."""
     X = df.drop(columns=[TARGET])
     y = df[TARGET]
 
@@ -53,7 +50,6 @@ def split_data(df: pd.DataFrame, test_size=0.2, val_size=0.1):
 
 
 def build_preprocessor(X: pd.DataFrame) -> ColumnTransformer:
-    """Create preprocessing pipeline with imputation + OHE."""
     numeric_features = X.select_dtypes(include=["int64", "float64"]).columns.tolist()
     cat_features = X.select_dtypes(include=["object", "category", "bool"]).columns.tolist()
 
@@ -111,7 +107,6 @@ def evaluate(estimator, X, y, label="test"):
 
 
 def explain(estimator, X_sample):
-    """Generate a SHAP summary plot and save to shap_summary.png."""
     import shap
     import matplotlib.pyplot as plt
 
